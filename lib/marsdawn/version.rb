@@ -1,0 +1,3 @@
+module Marsdawn
+  VERSION = "0.0.1"
+end
