@@ -30,8 +30,12 @@ class Marsdawn::Site
     @config[:site_index][uri] if @config[:site_index].key?(uri)
   end
 
+  def title
+    @config[:title]
+  end
+
   def title_link
-    @title_link ||= Marsdawn::Site::Link.new(self, '/', @config[:title])
+    @title_link ||= Marsdawn::Site::Link.new(self, '/', title)
   end
 
 end

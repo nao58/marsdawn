@@ -21,10 +21,15 @@ class Marsdawn::Source
       kramdown_options: {}
     }
     load_config
+    @comile_options = {}
   end
 
   def key
     @config[:key]
+  end
+
+  def compile_options opts
+    @compile_opts = opts
   end
 
   def compile storage_settings=nil
@@ -91,7 +96,10 @@ class Marsdawn::Source
 
   def markdown file, uri
     f = open(file)
-    Kramdown::Document.new(f.read, :input => 'Marsdawn', :link_defs => link_defs(uri)).to_html
+    opts = @compile_opts.dup
+    opts[:input] = 'Marsdawn'
+    opts[:link_defs] = link_defs(uri)
+    Kramdown::Document.new(f.read, opts).to_html
   end
 
   def digg path, uri=''

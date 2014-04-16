@@ -45,13 +45,24 @@ class Marsdawn::Site
       to_html
     end
 
-    def to_html
+    def to_html options={}
+      opts = {
+        css: ['http://dev.screw-axis.com/marsdawn/style.css'],
+        js: [],
+        title: CGI.escapeHTML(@title),
+        title_suffix: " | #{CGI.escapeHTML(@site.title)}",
+        lang: @config[:lang],
+        charset: @config[:encoding]
+      }.merge(options)
+      css_html = opts[:css].map{|file| %!<link rel="stylesheet" href="#{file}" type="text/css" />!}.join("\n")
+      js_html = opts[:js].map{|file| %!<script src="#{file}"></script>!}.join("\n")
       %~<!DOCTYPE html>
-      <html lang="#{@config[:lang]}">
+      <html lang="#{opts[:lang]}">
       <head>
-        <meta charset="#{@config[:encoding]}" />
-        <title>#{CGI.escapeHTML(@title)}</title>
-        <link rel="stylesheet" href="http://dev.screw-axis.com/marsdawn/style.css" type="text/css" />
+        <meta charset="#{opts[:encoding]}" />
+        <title>#{opts[:title]}#{opts[:title_suffix]}</title>
+        #{css_html}
+        #{js_html}
       </head>
       <body>
         <div id="container">
