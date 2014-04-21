@@ -18,7 +18,7 @@ class Marsdawn::Storage
 
   def self.handle_config config, opts
     if config.nil?
-      Marsdawn::Config.instance.get(opts[:key], :compile)
+      Marsdawn::Config.instance.get(opts[:key], :storage)
     else
       Marsdawn::Util.hash_symbolize_keys(config)
     end

@@ -14,7 +14,11 @@ class Marsdawn::Storage::FileSystem < Marsdawn::Storage::Base
     raise "Not specify the local storage path name." unless @config.key?(:path)
     @path = File.expand_path(@config[:path])
     raise "There is no directory to compile to '#{@path}'." unless File.exists?(@path)
-    @opts = opts
+    @opts = {
+      key: '-',
+      lang: 'en',
+      version: '0.0.1'
+    }.merge(opts)
     set_target_path
   end
 
@@ -56,9 +60,6 @@ class Marsdawn::Storage::FileSystem < Marsdawn::Storage::Base
 
   private
   def set_target_path
-    key = @opts[:key] || '-'
-    lang = @opts[:lang] || 'en'
-    version = @opts[:version] || '0.0.1'
     @target_path = File.join(@path, key, lang, version)
     @config_file = File.join(@target_path, '.config.yml')
   end

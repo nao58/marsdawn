@@ -2,9 +2,21 @@
 
 class Marsdawn::Storage::Base
 
-  def initialize settings, config
-    @settings = settings
+  def initialize config, opts
     @config = config
+    @opts = opts
+  end
+
+  def key
+    @opts[:key]
+  end
+
+  def lang
+    @opts[:lang]
+  end
+
+  def version
+    @opts[:version]
   end
 
   def finalize

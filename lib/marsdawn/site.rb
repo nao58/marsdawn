@@ -7,8 +7,11 @@ require 'cgi'
 
 class Marsdawn::Site
 
-  def initialize opts, storage_settings=nil
-    @storage = Marsdawn::Storage.get(storage_settings, opts)
+  def initialize opts, settings=nil
+    @key = opts[:key]
+    settings = Marsdawn::Config.instance.to_hash(@key) if settings.nil?
+    @settings = settings
+    @storage = Marsdawn::Storage.get(@settings[:storage], opts)
     @config = @storage.get_document_config
     @opts = opts
     @base_path = (opts.key?(:base_path) ? opts[:base_path] : '')
@@ -36,6 +39,12 @@ class Marsdawn::Site
 
   def title_link
     @title_link ||= Marsdawn::Site::Link.new(self, '/', title)
+  end
+
+  def search keyword, opts
+    raise "No search settings for this document." unless @settings.key?(:search)
+    se = Marsdawn::Search.get(@settings[:search], @storage)
+    se.search keyword, opts
   end
 
 end

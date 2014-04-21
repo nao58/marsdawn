@@ -32,17 +32,21 @@ class Marsdawn::Source
     @compile_opts = opts
   end
 
-  def compile storage_settings=nil
+  def config
+    @config
+  end
+
+  def compile storage
     investigate_source
-    output_documents storage_settings
+    output_documents storage
   end
 
   protected
   def load_config
     config_file = File.join(@path, '.marsdawn.yml')
     raise "There is no config file '.marsdawn.yml' in '#{@path}'" unless File.exists?(config_file)
-    config = Marsdawn::Util.hash_symbolize_keys(YAML.load_file(config_file))
-    @config.merge! config
+    conf = Marsdawn::Util.hash_symbolize_keys(YAML.load_file(config_file))
+    @config.merge! conf
     @doc_key = @config[:key]
     raise "The document key should be specified in .marsdawn.yml." if @doc_key.nil? || @doc_key.empty?
   end
@@ -55,8 +59,7 @@ class Marsdawn::Source
     update_sysinfo
   end
 
-  def output_documents storage_settings
-    storage = Marsdawn::Storage.get(storage_settings, @config)
+  def output_documents storage
     storage.prepare
     storage.set_document_config create_config
     @local2uri.each do |file, uri|
@@ -96,7 +99,7 @@ class Marsdawn::Source
 
   def markdown file, uri
     f = open(file)
-    opts = @compile_opts.dup
+    opts = @compile_opts[:kramdown] || {}
     opts[:input] = 'Marsdawn'
     opts[:link_defs] = link_defs(uri)
     Kramdown::Document.new(f.read, opts).to_html
@@ -171,9 +174,9 @@ class Marsdawn::Source
   end
 
   def create_config
-    config = @config.dup
-    config[:site_index] = create_site_index
-    config
+    ret = @config.dup
+    ret[:site_index] = create_site_index
+    ret
   end
 
   def create_site_index
