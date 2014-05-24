@@ -1,4 +1,8 @@
 # encoding: utf-8
+
+require 'coveralls'
+Coveralls.wear!
+
 require 'rubygems'
 
 require File.join(File.dirname(__FILE__), '../lib/marsdawn')
