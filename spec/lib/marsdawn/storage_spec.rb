@@ -10,7 +10,7 @@ describe Marsdawn::Storage, 'when call get method' do
     Marsdawn::Storage.get({:type=>'Test'},@opts).should be_an_instance_of(Marsdawn::Storage::Test)
   end
   it 'can be specified existing file.' do
-    proc {Marsdawn::Storage.get({'type'=>'NotExistingStorage'},@opts)}.should raise_error(RuntimeError, /^Undefined storage type/)
+    proc {Marsdawn::Storage.get({'type'=>'NotExistingStorage'},@opts)}.should raise_error(LoadError)
   end
   it 'can be specified existing class.' do
     class Marsdawn::Storage::AddingStorage < Marsdawn::Storage::Base

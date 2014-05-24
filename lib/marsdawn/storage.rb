@@ -7,13 +7,8 @@ class Marsdawn::Storage
     config = handle_config(config, opts)
     raise "No storage type is specified." unless config.key?(:type)
     class_name = config[:type]
-    unless self.const_defined?(class_name)
-      require_file = Marsdawn::Util.class_to_underscore(class_name)
-      fullpath = File.join(File.dirname(__FILE__), 'storage', "#{require_file}.rb")
-      raise "Undefined storage type '#{class_name}'." unless File.exists?(fullpath)
-      require fullpath
-    end
-    self.const_get(class_name).new config, opts
+    @@base_path ||= File.join(File.dirname(__FILE__), 'storage')
+    Marsdawn::Util.adapter(self, class_name, @@base_path).new config, opts
   end
 
   def self.handle_config config, opts

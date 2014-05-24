@@ -39,4 +39,11 @@ class Marsdawn::Util
     str.gsub(/"/, '\"')
   end
 
+  def self.adapter namespace, class_name, base_path
+    unless namespace.const_defined?(class_name)
+      require File.join(base_path, class_to_underscore(class_name))
+    end
+    namespace.const_get(class_name)
+  end
+
 end

@@ -51,8 +51,23 @@ class Marsdawn::Source
   end
 
   def link_defs base_uri
+    ret = relative_link_defs_from_front_matter base_uri
     base_path = Pathname(File.dirname(base_uri))
-    ret = @front_matter.each_with_object({}) do |(uri, vars), defs|
+    @doc_info[:link_defs].each do |key, link|
+      uri, title = link
+      if uri.start_with?('/')
+        rel_path = Pathname(uri).relative_path_from(base_path).to_s
+      else
+        rel_path = uri
+      end
+      ret[key] = [rel_path, title]
+    end
+    ret
+  end
+
+  def relative_link_defs_from_front_matter base_uri
+    base_path = Pathname(File.dirname(base_uri))
+    @front_matter.each_with_object({}) do |(uri, vars), defs|
       if vars.key?(:link_key)
         rel_path = Pathname(uri).relative_path_from(base_path).to_s
         defs[vars[:link_key]] = [rel_path, vars[:title]]
@@ -64,16 +79,6 @@ class Marsdawn::Source
         end
       end
     end
-    @doc_info[:link_defs].each do |key, link|
-      uri, title = link
-      if uri.start_with?('/')
-        rel_path = Pathname(uri).relative_path_from(base_path).to_s
-      else
-        rel_path = uri
-      end
-      ret[key] = [rel_path, title]
-    end
-    ret
   end
 
   def markdown file, uri, opts
@@ -89,20 +94,23 @@ class Marsdawn::Source
     read_directory_index path, uri
     items.each do |item|
       fullpath = File.join(path, item)
-      uri_item = item
-      uri_item = $1 if uri_item =~ /^\d+_(.*)/
+      uri_item = (item =~ /^\d+_(.*)/ ? $1 : item)
       if File.directory?(fullpath)
         digg fullpath, "#{uri}/#{uri_item}"
-      elsif item != @doc_info[:directory_index]
-        extname = File.extname(item)
-        if extname == @doc_info[:markdown_extname]
-          uri_item = File.basename(uri_item, extname)
-          fulluri = "#{uri}/#{uri_item}"
-          @local2uri[fullpath] = fulluri
-          @front_matter[fulluri] = read_front_matter(fullpath, uri_item)
-          @sysinfo[fulluri] = {:type => 'folder'}
-        end
+      elsif uri_item != @doc_info[:directory_index]
+        set_page_info fullpath, uri, uri_item
       end
+    end
+  end
+
+  def set_page_info fullpath, uri, uri_item
+    extname = File.extname(uri_item)
+    if extname == @doc_info[:markdown_extname]
+      uri_item = File.basename(uri_item, extname)
+      fulluri = "#{uri}/#{uri_item}"
+      @local2uri[fullpath] = fulluri
+      @front_matter[fulluri] = read_front_matter(fullpath, uri_item)
+      @sysinfo[fulluri] = {:type => 'folder'}
     end
   end
 
