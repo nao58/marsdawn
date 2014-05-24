@@ -24,4 +24,12 @@ class Marsdawn::Util
     text.gsub(/<[^>]*>/ui, '')
   end
 
+  def self.html_escape str
+    CGI.escapeHTML str
+  end
+
+  def self.attr_escape str
+    str.gsub(/"/, '\"')
+  end
+
 end

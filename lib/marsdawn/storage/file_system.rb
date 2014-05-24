@@ -37,8 +37,8 @@ class Marsdawn::Storage::FileSystem < Marsdawn::Storage::Base
     FileUtils.remove_entry_secure @tmproot
   end
 
-  def set_document_config config
-    File.write @tmp_config_file, YAML.dump(config)
+  def set_document_info doc_info
+    File.write @tmp_doc_info_file, YAML.dump(doc_info)
   end
 
   def set uri, content, exvars, sysinfo
@@ -49,8 +49,8 @@ class Marsdawn::Storage::FileSystem < Marsdawn::Storage::Base
     File.write fullpath, YAML.dump(data)
   end
 
-  def get_document_config
-    YAML.load_file @config_file
+  def get_document_info
+    YAML.load_file @doc_info_file
   end
 
   def get uri
@@ -61,7 +61,7 @@ class Marsdawn::Storage::FileSystem < Marsdawn::Storage::Base
   private
   def set_target_path
     @target_path = File.join(@path, key, lang, version)
-    @config_file = File.join(@target_path, '.config.yml')
+    @doc_info_file = File.join(@target_path, '.info.yml')
   end
 
   def setup_tmp_dir
@@ -69,7 +69,7 @@ class Marsdawn::Storage::FileSystem < Marsdawn::Storage::Base
     "The work directory '#{tmp_dir}' does not exist." unless File.exists?(tmp_dir)
     @tmproot = File.join(tmp_dir, "__tmp_#{$$}_#{Time.now.to_i}")
     Dir.mkdir @tmproot, @config[:mode_dir]
-    @tmp_config_file = File.join(@tmproot, '.config.yml')
+    @tmp_doc_info_file = File.join(@tmproot, '.info.yml')
   end
 
   def tmp_page_file uri

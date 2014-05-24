@@ -41,7 +41,7 @@ class Marsdawn::Search::Rroonga
     drop_tables
     create_tables
     docs = table('documents')
-    index = @storage.get_document_config[:site_index]
+    index = @storage.get_document_info[:site_index]
     index.each do |uri, title|
       page = @storage.get(uri)
       docs.add(uri, :title => title, :content => Marsdawn::Util.strip_tags(page[:content]))
@@ -49,8 +49,7 @@ class Marsdawn::Search::Rroonga
   end
 
   def search keyword, opts={}
-    snippet = Groonga::Snippet.new
-    #words = keyword.scan(/(?:\w|"[^"]*")+/)
+    snippet = Groonga::Snippet.new(html_escape: true, default_open_tag: '<strong>', default_close_tag: '</strong>', normalize: true)
     words = keyword.scan(/(?:\w|"[^"]*")+/).map{|w| w.delete('"')}
     words.each{|word| snippet.add_keyword(word, opts)}
     docs = table('documents')
@@ -65,7 +64,7 @@ class Marsdawn::Search::Rroonga
         end
       end
       expression
-    end.map{|rec| snippet.execute(rec.content)}
+    end.map{|rec| {uri: rec.key.key, title: rec.title, results: snippet.execute(rec.content)}}
   end
 
   private

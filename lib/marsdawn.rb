@@ -4,14 +4,20 @@ load "marsdawn/tasks.rake"
 require "marsdawn/version"
 require "marsdawn/util"
 require "marsdawn/config"
-require "marsdawn/source"
 require "marsdawn/storage"
 require "marsdawn/site"
 require "marsdawn/search"
 
 module Marsdawn
 
-  def self.compile key, source_path=nil, storage_settings=nil, compile_options=nil
+  def self.compile key=nil
+    config = key.nil? ? {} : Marsdawn::Config.instance.to_hash(key)
+    yield config if block_given?
+    require "marsdawn/compiler"
+    Marsdawn::Compiler.compile config
+  end
+
+  def self.compile_bk key, source_path=nil, storage_settings=nil, compile_options=nil
     config = Marsdawn::Config.instance
     source_path = config.get(key, :source) if source_path.nil?
     storage_settings = config.get(key, :storage) if storage_settings.nil?

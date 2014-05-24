@@ -25,16 +25,16 @@ class Marsdawn::Storage::Base
   def clean_up
   end
 
-  def set_document_config config
-    raise NotImplementedError.new("#{self.class.name}#set_document_config() is not implemented.")
+  def set_document_info doc_info
+    raise NotImplementedError.new("#{self.class.name}#set_document_info() is not implemented.")
   end
 
   def set uri, content, exvars, sysinfo
     raise NotImplementedError.new("#{self.class.name}#set() is not implemented.")
   end
 
-  def get_document_config
-    raise NotImplementedError.new("#{self.class.name}#get_document_config() is not implemented.")
+  def get_document_info
+    raise NotImplementedError.new("#{self.class.name}#get_document_info() is not implemented.")
   end
 
   def get uri

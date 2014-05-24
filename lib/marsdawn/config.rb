@@ -21,7 +21,7 @@ class Marsdawn::Config
   end
 
   def to_hash key
-    raise "Cannot find a storage setting for '#{key}'." unless @config.key?(key)
+    raise "Cannot find the configuration for '#{key}' in marsdawn.yml." unless @config.key?(key)
     Marsdawn::Util.hash_symbolize_keys(@config[key])
   end
 

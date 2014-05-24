@@ -6,10 +6,12 @@ require 'marsdawn/kramdown/parser'
 
 class Marsdawn::Source
 
+  attr_reader :doc_info
+
   def initialize path
     @path = File.expand_path(path)
     raise "No source directory '#{@path}'." unless File.exists?(@path)
-    @config = {
+    @doc_info = {
       key: nil,
       lang: 'en',
       title: '',
@@ -20,55 +22,33 @@ class Marsdawn::Source
       link_defs: {},
       kramdown_options: {}
     }
-    load_config
-    @comile_options = {}
+    load_doc_info
+    investigate
   end
 
-  def key
-    @config[:key]
-  end
-
-  def compile_options opts
-    @compile_opts = opts
-  end
-
-  def config
-    @config
-  end
-
-  def compile storage
-    investigate_source
-    output_documents storage
+  def each_contents options
+    @local2uri.each do |file, uri|
+      yield uri, markdown(file, uri, options), @exvars[uri], @sysinfo[uri]
+    end
   end
 
   protected
-  def load_config
-    config_file = File.join(@path, '.marsdawn.yml')
-    raise "There is no config file '.marsdawn.yml' in '#{@path}'" unless File.exists?(config_file)
-    conf = Marsdawn::Util.hash_symbolize_keys(YAML.load_file(config_file))
-    @config.merge! conf
-    @doc_key = @config[:key]
+  def load_doc_info
+    doc_info_file = File.join(@path, '.marsdawn.yml')
+    raise "There is no doc_info file '.marsdawn.yml' in '#{@path}'" unless File.exists?(doc_info_file)
+    conf = Marsdawn::Util.hash_symbolize_keys(YAML.load_file(doc_info_file))
+    @doc_info.merge! conf
+    @doc_key = @doc_info[:key]
     raise "The document key should be specified in .marsdawn.yml." if @doc_key.nil? || @doc_key.empty?
   end
 
-  def investigate_source
+  def investigate
     @local2uri = {}
     @exvars = {}
     @sysinfo = {}
     digg @path
     update_sysinfo
-  end
-
-  def output_documents storage
-    storage.prepare
-    storage.set_document_config create_config
-    @local2uri.each do |file, uri|
-      storage.set uri, markdown(file, uri), @exvars[uri], @sysinfo[uri]
-    end
-    storage.finalize
-  rescue => ex
-    storage.clean_up unless storage.nil?
-    raise ex
+    update_docinfo
   end
 
   def link_defs base_uri
@@ -85,7 +65,7 @@ class Marsdawn::Source
         end
       end
     end
-    @config[:link_defs].each do |key, link|
+    @doc_info[:link_defs].each do |key, link|
       uri, title = link
       if uri.start_with?('/')
         rel_path = Pathname(uri).relative_path_from(base_path).to_s
@@ -97,9 +77,8 @@ class Marsdawn::Source
     ret
   end
 
-  def markdown file, uri
+  def markdown file, uri, opts
     f = open(file)
-    opts = @compile_opts[:kramdown] || {}
     opts[:input] = 'Marsdawn'
     opts[:link_defs] = link_defs(uri)
     Kramdown::Document.new(f.read, opts).to_html
@@ -115,9 +94,9 @@ class Marsdawn::Source
       uri_item = $1 if uri_item =~ /^\d+_(.*)/
       if File.directory?(fullpath)
         digg fullpath, "#{uri}/#{uri_item}"
-      elsif item != @config[:directory_index]
+      elsif item != @doc_info[:directory_index]
         extname = File.extname(item)
-        if extname == @config[:markdown_extname]
+        if extname == @doc_info[:markdown_extname]
           uri_item = File.basename(uri_item, extname)
           fulluri = "#{uri}/#{uri_item}"
           @local2uri[fullpath] = fulluri
@@ -129,7 +108,7 @@ class Marsdawn::Source
   end
 
   def read_directory_index path, uri
-    indexfile = File.join(path, @config[:directory_index])
+    indexfile = File.join(path, @doc_info[:directory_index])
     if File.exists?(indexfile)
       uri = (uri == '' ? '/' : uri)
       @local2uri[indexfile] = uri
@@ -140,7 +119,7 @@ class Marsdawn::Source
 
   def read_exvars file, name
     f = open(file)
-    opts = @config[:kramdown_options]
+    opts = @doc_info[:kramdown_options]
     opts[:input] = 'Marsdawn'
     doc = Kramdown::Document.new(f.read, opts)
     exvars = Kramdown::Parser::Marsdawn.exvars
@@ -165,18 +144,16 @@ class Marsdawn::Source
     end
   end
 
+  def update_docinfo
+    @doc_info[:site_index] = create_site_index
+  end
+
   def create_breadcrumb uri
     uri.split('/').each_with_object([]) do |dir, ret|
       parent = (ret.last == '/' ? '' : ret.last)
       path = "#{parent}/#{dir}"
       ret << path unless uri == path
     end
-  end
-
-  def create_config
-    ret = @config.dup
-    ret[:site_index] = create_site_index
-    ret
   end
 
   def create_site_index

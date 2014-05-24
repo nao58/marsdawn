@@ -2,23 +2,24 @@
 
 require 'marsdawn/site/breadcrumb'
 require 'marsdawn/site/page_nav'
+require 'marsdawn/site/search_box'
 
 class Marsdawn::Site
   class Page
     attr_reader :site, :uri, :title, :content, :type, :level
 
-    def initialize config, page, site
-      @config = config
-      @page = page
+    def initialize doc_info, page, site
+      @doc_info = doc_info
       @site = site
-      @exvars = @page[:exvars]
-      @sysinfo = @page[:sysinfo]
+      exvars = page[:exvars]
+      @sysinfo = page[:sysinfo]
       @uri = @sysinfo[:uri]
-      @title = @exvars[:title]
-      @content = @page[:content]
+      @title = exvars[:title]
+      @content = page[:content]
       @type = @sysinfo[:type]
       @level = @sysinfo[:level]
       @parent = @sysinfo[:parent]
+      @search_word = ''
     end
 
     def breadcrumb
@@ -38,7 +39,11 @@ class Marsdawn::Site
     end
 
     def title_link
-      @title_link ||= Marsdawn::Site::Link.new(@site, @uri, @exvars[:title])
+      @title_link ||= Marsdawn::Site::Link.new(@site, @uri, @title)
+    end
+
+    def search_box
+      @search_box ||= Marsdawn::Site::SearchBox.new(@site, @search_word)
     end
 
     def to_s
@@ -51,12 +56,12 @@ class Marsdawn::Site
         js: [],
         title: CGI.escapeHTML(@title),
         title_suffix: " | #{CGI.escapeHTML(@site.title)}",
-        lang: @config[:lang],
-        charset: @config[:encoding]
+        lang: @doc_info[:lang],
+        charset: @doc_info[:encoding]
       }.merge(options)
       css_html = opts[:css].map{|file| %!<link rel="stylesheet" href="#{file}" type="text/css" />!}.join("\n")
       js_html = opts[:js].map{|file| %!<script src="#{file}"></script>!}.join("\n")
-      %~<!DOCTYPE html>
+      %|<!DOCTYPE html>
       <html lang="#{opts[:lang]}">
       <head>
         <meta charset="#{opts[:encoding]}" />
@@ -67,19 +72,22 @@ class Marsdawn::Site
       <body>
         <div id="container">
           <div id="site-header"><h1 id="site-title">#{@site.title_link}</h1></div>
-          <div id="side-menu"><nav>#{neighbor}</nav></div>
-          <div id="site-body">
-          <div id="main-content">
-            <div id="breadcrumb"><nav>#{breadcrumb}</nav></div>
-            <div id="page-content">#{@content}</div>
-            <div id="under-index">#{under}</div>
-            <div id="page-nav">#{page_nav}</div>
+          <div id="side-menu">
+            #{search_box}
+            <nav>#{neighbor}</nav>
           </div>
-          <div class="clear"></div>
+          <div id="site-body">
+            <div id="main-content">
+              <div id="breadcrumb"><nav>#{breadcrumb}</nav></div>
+              <div id="page-content">#{@content}</div>
+              <div id="under-index">#{under}</div>
+              <div id="page-nav">#{page_nav}</div>
+            </div>
+            <div class="clear"></div>
           </div>
         </div>
       </body>
-      </html>~
+      </html>|
     end
 
   end

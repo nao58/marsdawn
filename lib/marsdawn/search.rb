@@ -2,11 +2,11 @@
 
 class Marsdawn::Search
 
-  def self.create_index opts, storage
-    self.get(opts, storage).create_index
+  def self.create_index storage, opts
+    self.get(storage, opts).create_index
   end
 
-  def self.get opts, storage
+  def self.get storage, opts
     opts = Marsdawn::Util.hash_symbolize_keys(opts)
     key = opts[:type]
     unless self.const_defined?(key)
