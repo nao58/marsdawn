@@ -5,13 +5,13 @@ require File.expand_path(File.join('../../../lib/marsdawn', 'source'), File.dirn
 
 describe Marsdawn::Source do
   context 'when access to invalid source document' do
-    it 'should raise error if the specified path does not exist.' do
+    it 'should raise error when the specified path does not exist.' do
       expect {Marsdawn::Source.new(File.join($TEST_DOC_DIR, 'dummy'))}.to raise_error(RuntimeError, /^No source directory/)
     end
-    it 'should raise error if the doc_info file does not exist.' do
+    it 'should raise error when the doc_info file does not exist.' do
       expect {Marsdawn::Source.new(File.join($TEST_DOC_DIR, 'no_config'))}.to raise_error(RuntimeError, /^There is no doc_info file/)
     end
-    it 'should raise error if the document key is not specified in the config file.' do
+    it 'should raise error when the document key is not specified in the config file.' do
       expect {Marsdawn::Source.new(File.join($TEST_DOC_DIR, 'no_key'))}.to raise_error(RuntimeError, /^The document key should be specified/)
     end
   end

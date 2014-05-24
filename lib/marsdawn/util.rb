@@ -2,8 +2,15 @@
 
 class Marsdawn::Util
 
-  def self.hash_symbolize_keys hash
-    hash.each_with_object({}){|(k,v),h| h[k.to_sym]=v}
+  def self.hash_symbolize_keys hash, deep=false
+    hash.each_with_object({}) do |(key, val), ret|
+      val = hash_symbolize_keys(val, deep) if deep && val.kind_of?(Hash)
+      ret[key.to_sym] = val
+    end
+  end
+
+  def self.hash_symbolize_keys_deep hash
+    hash_symbolize_keys hash, true
   end
 
   def self.class_to_underscore class_name

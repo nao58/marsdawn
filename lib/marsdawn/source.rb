@@ -1,8 +1,7 @@
 # encoding: utf-8
 
 require 'yaml'
-require 'kramdown'
-require 'marsdawn/kramdown/parser'
+require 'marsdawn/source/document'
 
 class Marsdawn::Source
 
@@ -28,7 +27,7 @@ class Marsdawn::Source
 
   def each_contents options
     @local2uri.each do |file, uri|
-      yield uri, markdown(file, uri, options), @exvars[uri], @sysinfo[uri]
+      yield uri, markdown(file, uri, options), @front_matter[uri], @sysinfo[uri]
     end
   end
 
@@ -44,7 +43,7 @@ class Marsdawn::Source
 
   def investigate
     @local2uri = {}
-    @exvars = {}
+    @front_matter = {}
     @sysinfo = {}
     digg @path
     update_sysinfo
@@ -53,7 +52,7 @@ class Marsdawn::Source
 
   def link_defs base_uri
     base_path = Pathname(File.dirname(base_uri))
-    ret = @exvars.each_with_object({}) do |(uri, vars), defs|
+    ret = @front_matter.each_with_object({}) do |(uri, vars), defs|
       if vars.key?(:link_key)
         rel_path = Pathname(uri).relative_path_from(base_path).to_s
         defs[vars[:link_key]] = [rel_path, vars[:title]]
@@ -100,7 +99,7 @@ class Marsdawn::Source
           uri_item = File.basename(uri_item, extname)
           fulluri = "#{uri}/#{uri_item}"
           @local2uri[fullpath] = fulluri
-          @exvars[fulluri] = read_exvars(fullpath, uri_item)
+          @front_matter[fulluri] = read_front_matter(fullpath, uri_item)
           @sysinfo[fulluri] = {:type => 'folder'}
         end
       end
@@ -112,19 +111,19 @@ class Marsdawn::Source
     if File.exists?(indexfile)
       uri = (uri == '' ? '/' : uri)
       @local2uri[indexfile] = uri
-      @exvars[uri] = read_exvars(indexfile, File.basename(uri))
+      @front_matter[uri] = read_front_matter(indexfile, File.basename(uri))
       @sysinfo[uri] = {:type => 'page'}
     end
   end
 
-  def read_exvars file, name
+  def read_front_matter file, name
     f = open(file)
     opts = @doc_info[:kramdown_options]
     opts[:input] = 'Marsdawn'
     doc = Kramdown::Document.new(f.read, opts)
-    exvars = Kramdown::Parser::Marsdawn.exvars
-    exvars[:title] = name.gsub('_', ' ').gsub('-', ' ').capitalize unless exvars.key?(:title)
-    exvars
+    front_matter = Kramdown::Parser::Marsdawn.front_matter
+    front_matter[:title] ||= name.gsub('_', ' ').gsub('-', ' ').capitalize
+    front_matter
   end
 
   def update_sysinfo
@@ -157,7 +156,7 @@ class Marsdawn::Source
   end
 
   def create_site_index
-    @exvars.each_with_object({}) do |(uri, vars), ret|
+    @front_matter.each_with_object({}) do |(uri, vars), ret|
       ret[uri] = vars[:title]
     end
   end

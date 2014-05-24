@@ -24,7 +24,7 @@ class Marsdawn::Site
   end
 
   def full_path uri
-    @base_path + uri
+    File.join @base_path, uri
   end
 
   def index

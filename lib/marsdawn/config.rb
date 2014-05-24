@@ -5,10 +5,17 @@ require 'singleton'
 class Marsdawn::Config
   include Singleton
 
+  def self.set config={}
+    yield config if block_given?
+    @@config = config
+  end
+
   def initialize
-    file = File.absolute_path('./config/marsdawn.yml')
-    raise "Cannot find a storage setting file for marsdawn." unless File.exists?(file)
-    @config = YAML.load_file(file)
+    if @@config.nil?
+      file = File.absolute_path('./config/marsdawn.yml')
+      raise "Cannot find a storage setting file for marsdawn." unless File.exists?(file)
+      @config = YAML.load_file(file)
+    end
   end
 
   def get key, entry, default=nil

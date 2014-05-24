@@ -18,8 +18,8 @@ class Marsdawn::Compiler
     kramdown_options = options[:kramdown] || {}
     storage.prepare
     storage.set_document_info source.doc_info
-    source.each_contents(kramdown_options) do |uri, content, exvars, sysinfo|
-      storage.set uri, content, exvars, sysinfo
+    source.each_contents(kramdown_options) do |uri, content, front_matter, sysinfo|
+      storage.set uri, content, front_matter, sysinfo
     end
     storage.finalize
   rescue => ex

@@ -2,12 +2,12 @@
 
 class Kramdown::Parser::Marsdawn < Kramdown::Parser::Kramdown
 
-  def self.exvars
-    @@exvars
+  def self.front_matter
+    @@front_matter
   end
 
   def parse
-    @@exvars = {}
+    @@front_matter = {}
     super
   end
 
@@ -25,10 +25,10 @@ class Kramdown::Parser::Marsdawn < Kramdown::Parser::Kramdown
 
   def handle_extension(name, opts, body, type)
     case name
-    when 'marsdawn'
+    when 'front_matter'
       opts.each do |key, val|
-        @@exvars[key.to_sym] = val
-        @@exvars[:link_key] = val if key == :title
+        @@front_matter[key.to_sym] = val
+        @@front_matter[:link_key] = val if key == 'title'
       end
       true
     else
@@ -43,14 +43,14 @@ class Kramdown::Parser::Marsdawn < Kramdown::Parser::Kramdown
   end
 
   def add_title_vars title
-    @@exvars[:title] = title unless @@exvars.key?(:title)
-    @@exvars[:link_key] = title unless @@exvars.key?(:link_key)
+    @@front_matter[:title] = title unless @@front_matter.key?(:title)
+    @@front_matter[:link_key] = title unless @@front_matter.key?(:link_key)
   end
 
   def insert_title_anchor title
     anchor_name = title.downcase.gsub(' ', '-')
     @tree.children.last.children.insert 0, Element.new(:raw, %!<a name="#{anchor_name}"></a>!, 'type' => 'html')
-    @@exvars[:anchors] ||= {}
-    @@exvars[:anchors][title] = anchor_name
+    @@front_matter[:anchors] ||= {}
+    @@front_matter[:anchors][title] = anchor_name
   end
 end
