@@ -31,5 +31,10 @@ describe Marsdawn::Source do
       expect(info[:encoding]).to eq 'utf-8'
       expect(info[:link_defs]).to eq({})
     end
+    it 'should read right source documents.' do
+      mdx = Marsdawn::Source.new(File.join($TEST_DOC_DIR, 'docs01'))
+      uris = %w(/ /about /tutorial /tutorial/install /tutorial/getting_start /reference/1up /reference/each /reference/z-index /appendix)
+      expect(mdx.local2uri.map{|k,v| v}).to eq(uris)
+    end
   end
 end

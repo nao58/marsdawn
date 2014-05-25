@@ -5,7 +5,7 @@ require 'marsdawn/source/document'
 
 class Marsdawn::Source
 
-  attr_reader :doc_info
+  attr_reader :doc_info, :local2uri
 
   def initialize path
     @path = File.expand_path(path)

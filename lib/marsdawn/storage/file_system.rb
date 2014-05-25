@@ -5,7 +5,7 @@ require 'yaml'
 
 class Marsdawn::Storage::FileSystem < Marsdawn::Storage::Base
 
-  def initialize config, opts
+  def initialize config, opts={}
     @config = {
       tmp_dir: '/tmp',
       mode_dir: 0755,
@@ -41,11 +41,11 @@ class Marsdawn::Storage::FileSystem < Marsdawn::Storage::Base
     File.write @tmp_doc_info_file, YAML.dump(doc_info)
   end
 
-  def set uri, content, exvars, sysinfo
+  def set uri, content, front_matter, sysinfo
     fullpath = tmp_page_file(uri)
     dir = File.dirname(fullpath)
     FileUtils.mkdir_p dir, :mode => @config[:mode_dir] unless File.exists?(dir)
-    data = {content: content, exvars: exvars, sysinfo: sysinfo}
+    data = {content: content, front_matter: front_matter, sysinfo: sysinfo}
     File.write fullpath, YAML.dump(data)
   end
 
@@ -55,7 +55,7 @@ class Marsdawn::Storage::FileSystem < Marsdawn::Storage::Base
 
   def get uri
     fullpath = page_file(uri)
-    YAML.load_file fullpath
+    YAML.load_file fullpath if File.exists?(fullpath)
   end
 
   private
