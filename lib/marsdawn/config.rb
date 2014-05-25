@@ -5,6 +5,8 @@ require 'singleton'
 class Marsdawn::Config
   include Singleton
 
+  @@config = nil
+
   def self.set config={}
     yield config if block_given?
     @@config = config

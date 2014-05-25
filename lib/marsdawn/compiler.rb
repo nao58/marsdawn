@@ -10,7 +10,7 @@ class Marsdawn::Compiler
     source = Marsdawn::Source.new(config[:source])
     storage = Marsdawn::Storage.get(config[:storage], source.doc_info)
     compile_source source, storage, config[:compile_options]
-    create_search_index storage, config[:search]
+    create_search_index storage, config[:search] if config.key?(:search)
   end
 
   def self.compile_source source, storage, options
