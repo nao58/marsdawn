@@ -9,7 +9,7 @@ module Marsdawn
       attr_reader :attr, :content
 
       def initialize text
-        m = text.match(/^---\n(?<attr>.*?)\n---\n(?<content>.*)$/m)
+        m = text.match(/\A---*\n(?<attr>.*?)\n---*\n(?<content>.*)$/m)
         if m.nil?
           @attr = {}
           @content = text

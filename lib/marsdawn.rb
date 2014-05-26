@@ -1,6 +1,5 @@
 # encoding: utf-8
 
-load "marsdawn/tasks.rake"
 require "marsdawn/version"
 require "marsdawn/util"
 require "marsdawn/config"
@@ -17,13 +16,38 @@ module Marsdawn
     require File.join(@@base_path, path)
   end
 
-  # compile document source
+  # build document source
   # @param [String] key of config file entry
-  def self.compile key=nil
-    config = key.nil? ? {} : Marsdawn::Config.new.to_hash(key)
-    yield config if block_given?
-    require "marsdawn/compiler"
-    Marsdawn::Compiler.compile config
+  def self.build *keys
+    require "marsdawn/builder"
+    if block_given?
+      conf = {}
+      yield conf
+      configs = [conf]
+    else
+      configs = configs_from_file(keys)
+    end
+    configs.each do |conf|
+      Marsdawn::Builder.build conf
+    end
+  rescue => e
+    puts "[MarsDawn] ERROR: #{e.message}"
+  end
+
+  private
+  def self.configs_from_file keys
+    [].tap do |ret|
+      config = Marsdawn::Config.new
+      if keys.size > 0
+        keys.each do |key|
+          ret << config.to_hash(key)
+        end
+      else
+        config.each do |key, conf|
+          ret << conf
+        end
+      end
+    end
   end
 
 end

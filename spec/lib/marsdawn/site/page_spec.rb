@@ -7,7 +7,7 @@ describe Marsdawn::Site::Page do
   before :all do
     @source_path = File.join($TEST_DOC_DIR, 'docs01')
     @storage_config = {type: 'FileSystem', path: $COMPILED_DOC_DIR}
-    Marsdawn.compile do |config|
+    Marsdawn.build do |config|
       config[:source] = @source_path
       config[:storage] = @storage_config
     end

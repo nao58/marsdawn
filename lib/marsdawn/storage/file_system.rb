@@ -12,8 +12,8 @@ class Marsdawn::Storage::FileSystem < Marsdawn::Storage::Base
       mode_file: 0644
     }.merge(config)
     raise "Not specify the local storage path name." unless @config.key?(:path)
-    @path = File.expand_path(@config[:path])
-    raise "There is no directory to compile to '#{@path}'." unless File.exists?(@path)
+    @path = File.absolute_path(@config[:path])
+    raise "There is no directory to build to '#{@path}'." unless File.exists?(@path)
     @opts = {
       key: '-',
       lang: 'en',

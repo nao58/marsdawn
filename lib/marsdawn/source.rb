@@ -87,8 +87,7 @@ class Marsdawn::Source
   end
 
   def digg path, uri=''
-    Dir.chdir path
-    items = Dir.glob('*').sort
+    items = Dir.glob(File.join(path,'*')).map{|f| File.basename(f)}.sort
     read_directory_index path, uri
     items.each do |item|
       fullpath = File.join(path, item)

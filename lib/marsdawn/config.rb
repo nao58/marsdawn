@@ -22,4 +22,10 @@ class Marsdawn::Config
     Marsdawn::Util.hash_symbolize_keys(@config[key])
   end
 
+  def each
+    @config.keys.each do |key|
+      yield key, to_hash(key)
+    end
+  end
+
 end

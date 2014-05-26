@@ -1,0 +1,10 @@
+# encoding: utf-8
+
+require 'marsdawn'
+if ARGV.size > 0
+  ARGV.each do |key|
+    Marsdawn.build key
+  end
+else
+  Marsdawn.build
+end
