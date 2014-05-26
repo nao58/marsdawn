@@ -20,7 +20,7 @@ module Marsdawn
   # compile document source
   # @param [String] key of config file entry
   def self.compile key=nil
-    config = key.nil? ? {} : Marsdawn::Config.instance.to_hash(key)
+    config = key.nil? ? {} : Marsdawn::Config.new.to_hash(key)
     yield config if block_given?
     require "marsdawn/compiler"
     Marsdawn::Compiler.compile config

@@ -21,18 +21,41 @@ describe Marsdawn::Site do
     before :all do
       @site = Marsdawn::Site.new({key: 'test_docs01'}, {storage: @storage_config})
     end
+    it 'should return the page.' do
+      expect(site.page('/tutorial/install')).to be_a_kind_of(Marsdawn::Site::Page)
+    end
     it 'should return full path.' do
       expect(site.full_path('/about')).to eq('/about')
       expect(site.full_path('/reference/each')).to eq('/reference/each')
     end
+    it 'should return the index.' do
+      expect(site.index).to be_a_kind_of(Marsdawn::Site::Indexer)
+    end
+    it 'should return the page title.' do
+      expect(site.page_title('/about')).to eq('About')
+      expect(site.page_title('/tutorial/getting_start')).to eq('Getting start using MarsDawn')
+    end
+    it 'should return the site title.' do
+      expect(site.title).to eq('Test Document')
+    end
+    it 'should return the site title link.' do
+      expect(site.title_link.uri).to eq('/')
+    end
+    it 'should return if the site is seawrchable.' do
+      expect(site.searchable?).to be_false
+    end
   end
-  context 'with default options' do
+
+  context 'with base_path options' do
     before :all do
       @site = Marsdawn::Site.new({key: 'test_docs01', base_path: '/test'}, {storage: @storage_config})
     end
     it 'should return full path.' do
       expect(site.full_path('/about')).to eq('/test/about')
       expect(site.full_path('/reference/each')).to eq('/test/reference/each')
+    end
+    it 'should return the site title link.' do
+      expect(site.title_link.uri).to eq('/test/')
     end
   end
 

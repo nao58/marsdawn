@@ -11,7 +11,7 @@ class Marsdawn::Site
   def initialize opts, config=nil
     @key = opts[:key]
     yield config if block_given?
-    config = Marsdawn::Config.instance.to_hash(@key) if config.nil?
+    config = Marsdawn::Config.new.to_hash(@key) if config.nil?
     @config = config
     @storage = Marsdawn::Storage.get(@config[:storage], opts)
     @doc_info = @storage.get_document_info
@@ -40,7 +40,7 @@ class Marsdawn::Site
   end
 
   def title_link
-    @title_link ||= Marsdawn::Site::Link.new(self, '/', title)
+    @title_link ||= Marsdawn::Site::Link.new(self, "#{@base_path}/", title)
   end
 
   def searchable?

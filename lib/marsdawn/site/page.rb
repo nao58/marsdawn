@@ -11,10 +11,10 @@ class Marsdawn::Site
     def initialize doc_info, page, site
       @doc_info = doc_info
       @site = site
-      exvars = page[:exvars]
+      front_matter = page[:front_matter]
       @sysinfo = page[:sysinfo]
       @uri = @sysinfo[:uri]
-      @title = exvars[:title]
+      @title = front_matter[:title]
       @content = page[:content]
       @type = @sysinfo[:type]
       @level = @sysinfo[:level]

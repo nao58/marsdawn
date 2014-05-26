@@ -82,10 +82,8 @@ class Marsdawn::Source
   end
 
   def markdown file, uri, opts
-    f = open(file)
-    opts[:input] = 'Marsdawn'
     opts[:link_defs] = link_defs(uri)
-    Kramdown::Document.new(f.read, opts).to_html
+    Document.read(file, opts).to_html
   end
 
   def digg path, uri=''
@@ -125,13 +123,8 @@ class Marsdawn::Source
   end
 
   def read_front_matter file, name
-    f = open(file)
-    opts = @doc_info[:kramdown_options]
-    opts[:input] = 'Marsdawn'
-    doc = Kramdown::Document.new(f.read, opts)
-    front_matter = Kramdown::Parser::Marsdawn.front_matter
-    front_matter[:title] ||= name.gsub('_', ' ').gsub('-', ' ').capitalize
-    front_matter
+    doc = Document.read(file, @doc_info[:kramdown_options])
+    doc.front_matter
   end
 
   def update_sysinfo

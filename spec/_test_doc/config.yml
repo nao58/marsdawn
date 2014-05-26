@@ -1,0 +1,10 @@
+test_docs01:
+  source: /path/to/source01
+  storage:
+    type: FileSystem
+    path: /path/to/storage01
+test_docs02:
+  source: /path/to/source02
+  storage:
+    type: FileSystem
+    path: /path/to/storage02
