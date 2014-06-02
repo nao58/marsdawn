@@ -44,8 +44,8 @@ describe Marsdawn::Site do
     it 'should return the site title link.' do
       expect(site.title_link.uri).to eq('/')
     end
-    it 'should return if the site is seawrchable.' do
-      expect(site.searchable?).to be_false
+    it 'should return if the site is searchable.' do
+      expect(site.searchable?).to be(false)
     end
   end
 
