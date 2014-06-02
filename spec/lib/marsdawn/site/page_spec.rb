@@ -11,7 +11,9 @@ describe Marsdawn::Site::Page do
       config[:source] = @source_path
       config[:storage] = @storage_config
     end
-    @site = Marsdawn::Site.new({key: 'test_docs01'}, {storage: @storage_config})
+    @site = Marsdawn::Site.new(key: 'test_docs01') do |config|
+      config[:storage] = @storage_config
+    end
   end
 
   def site
@@ -32,12 +34,21 @@ describe Marsdawn::Site::Page do
     it 'should return the neighbor pages.' do
       expect(page.neighbor.keys).to eq(%w(/about /tutorial /appendix))
     end
+    it 'should return the top page.' do
+      expect(page.top.uri).to eq('/')
+    end
+    it 'should return the parent page.' do
+      expect(page.parent).to be_nil
+    end
     it 'should return the under pages.' do
       expect(page.under.keys).to eq(%w(/about /tutorial /tutorial/install /tutorial/getting_start /reference/1up /reference/each /reference/z-index /appendix))
     end
     it 'should return the page navigation.' do
       expect(page.page_nav[:prev_page]).to be_nil
       expect(page.page_nav[:next_page].uri).to eq('/about')
+    end
+    it 'should return the link object to this page.' do
+      expect(page.link.uri).to eq('/')
     end
   end
 
@@ -51,12 +62,21 @@ describe Marsdawn::Site::Page do
     it 'should return the neighbor pages.' do
       expect(page.neighbor.keys).to eq(%w(/about /tutorial /appendix))
     end
+    it 'should return the top page.' do
+      expect(page.top.uri).to eq('/')
+    end
+    it 'should return the parent page.' do
+      expect(page.parent.uri).to eq('/')
+    end
     it 'should return the under pages.' do
       expect(page.under.keys).to eq(%w(/tutorial/install /tutorial/getting_start))
     end
     it 'should return the page navigation.' do
       expect(page.page_nav[:prev_page].uri).to eq('/about')
       expect(page.page_nav[:next_page].uri).to eq('/tutorial/install')
+    end
+    it 'should return the link object to this page.' do
+      expect(page.link.uri).to eq('/tutorial')
     end
   end
 
@@ -70,12 +90,24 @@ describe Marsdawn::Site::Page do
     it 'should return the neighbor pages.' do
       expect(page.neighbor.keys).to eq(%w(/tutorial/install /tutorial/getting_start))
     end
+    it 'should return the top page.' do
+      expect(page.top.uri).to eq('/')
+    end
+    it 'should return the parent page.' do
+      expect(page.parent.uri).to eq('/tutorial')
+    end
+    it 'should return the paretn pages.' do
+      expect(page.parent.uri).to eq('/tutorial')
+    end
     it 'should return the under pages.' do
       expect(page.under.keys).to eq(%w())
     end
     it 'should return the page navigation.' do
       expect(page.page_nav[:prev_page].uri).to eq('/tutorial')
       expect(page.page_nav[:next_page].uri).to eq('/tutorial/getting_start')
+    end
+    it 'should return the link object to this page.' do
+      expect(page.link.uri).to eq('/tutorial/install')
     end
   end
 

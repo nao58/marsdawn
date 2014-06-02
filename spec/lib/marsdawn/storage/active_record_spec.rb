@@ -1,14 +1,15 @@
 # encoding: utf-8
 
 require File.expand_path(File.join('../../../', 'spec_helper'), File.dirname(__FILE__))
-Marsdawn.require_lib 'storage/file_system'
+require File.expand_path(File.join('../../../', 'stubs', 'marsdawn_docs'), File.dirname(__FILE__))
+Marsdawn.require_lib 'storage/active_record'
 
-describe Marsdawn::Storage::FileSystem do
+describe Marsdawn::Storage::ActiveRecord do
 
   before do
-    conf = {path: $COMPILED_DOC_DIR}
+    conf = {}
     opts = {key: 'unit_test'}
-    @storage = Marsdawn::Storage::FileSystem.new(conf, opts)
+    @storage = Marsdawn::Storage::ActiveRecord.new(conf, opts)
   end
 
   it 'should write and read the document info.' do

@@ -6,7 +6,7 @@ require 'marsdawn/site/search_box'
 
 class Marsdawn::Site
   class Page
-    attr_reader :site, :uri, :title, :content, :type, :level
+    attr_reader :site, :uri, :title, :content, :type, :level, :sysinfo
 
     def initialize doc_info, page, site
       @doc_info = doc_info
@@ -18,7 +18,6 @@ class Marsdawn::Site
       @content = page[:content]
       @type = @sysinfo[:type]
       @level = @sysinfo[:level]
-      @parent = @sysinfo[:parent]
       @search_word = ''
     end
 
@@ -30,6 +29,14 @@ class Marsdawn::Site
       @neighbor ||= @site.index.neighbor(@uri)
     end
 
+    def top
+      @site.top
+    end
+
+    def parent
+      @parent ||= Marsdawn::Site::Link.new(@site, @sysinfo[:parent]) unless @sysinfo[:parent].nil?
+    end
+
     def under
       @under ||= @site.index.under(@uri)
     end
@@ -38,8 +45,8 @@ class Marsdawn::Site
       @page_nav ||= Marsdawn::Site::PageNav.new(@site, @sysinfo[:prev_page], @sysinfo[:next_page])
     end
 
-    def title_link
-      @title_link ||= Marsdawn::Site::Link.new(@site, @uri, @title)
+    def link
+      @link ||= Marsdawn::Site::Link.new(@site, @uri, @title)
     end
 
     def search_box
@@ -51,6 +58,23 @@ class Marsdawn::Site
     end
 
     def to_html options={}
+      <<-"EOS"
+      <div class="main-container">
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-3 sidebar">
+            <nav>#{neighbor}</nav>
+          </div>
+          <div class="col-lg-9 content">
+            <p>contents</p>
+          </div>
+        </div>
+      </div>
+      </div>
+      EOS
+    end
+
+    def to_page_html options={}
       opts = {
         css: ['http://dev.screw-axis.com/marsdawn/style.css'],
         js: [],

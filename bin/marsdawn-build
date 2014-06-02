@@ -1,6 +1,10 @@
 # encoding: utf-8
 
 require 'marsdawn'
+
+Rake::Task['marsdawn:build'].execute
+
+=begin
 if ARGV.size > 0
   ARGV.each do |key|
     Marsdawn.build key
@@ -8,3 +12,4 @@ if ARGV.size > 0
 else
   Marsdawn.build
 end
+=end

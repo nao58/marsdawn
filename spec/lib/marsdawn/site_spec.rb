@@ -19,7 +19,9 @@ describe Marsdawn::Site do
 
   context 'with default options' do
     before :all do
-      @site = Marsdawn::Site.new({key: 'test_docs01'}, {storage: @storage_config})
+      @site = Marsdawn::Site.new(key: 'test_docs01') do |config|
+        config[:storage] = @storage_config
+      end
     end
     it 'should return the page.' do
       expect(site.page('/tutorial/install')).to be_a_kind_of(Marsdawn::Site::Page)
@@ -48,7 +50,9 @@ describe Marsdawn::Site do
 
   context 'with base_path options' do
     before :all do
-      @site = Marsdawn::Site.new({key: 'test_docs01', base_path: '/test'}, {storage: @storage_config})
+      @site = Marsdawn::Site.new(key: 'test_docs01', base_path: '/test') do |config|
+        config[:storage] = @storage_config
+      end
     end
     it 'should return full path.' do
       expect(site.full_path('/about')).to eq('/test/about')

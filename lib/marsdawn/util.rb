@@ -30,7 +30,7 @@ class Marsdawn::Util
   end
 
   def self.adapter namespace, class_name, base_path
-    unless namespace.const_defined?(class_name)
+    unless namespace.const_defined?(class_name, false)
       require File.join(base_path, class_to_underscore(class_name))
     end
     namespace.const_get(class_name)

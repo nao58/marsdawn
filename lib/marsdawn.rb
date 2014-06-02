@@ -1,5 +1,6 @@
 # encoding: utf-8
 
+load "marsdawn.rake"
 require "marsdawn/version"
 require "marsdawn/util"
 require "marsdawn/config"
@@ -30,8 +31,8 @@ module Marsdawn
     configs.each do |conf|
       Marsdawn::Builder.build conf
     end
-  rescue => e
-    puts "[MarsDawn] ERROR: #{e.message}"
+  #rescue => e
+  #  puts "[MarsDawn] ERROR: #{e.message}"
   end
 
   private

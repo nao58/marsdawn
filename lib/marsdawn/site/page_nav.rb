@@ -5,8 +5,8 @@ class Marsdawn::Site
 
     def initialize site, prev_page, next_page
       @site = site
-      self[:prev_page] = @site.index[prev_page]
-      self[:next_page] = @site.index[next_page]
+      self[:prev_page] = @site.index[prev_page] unless prev_page.nil?
+      self[:next_page] = @site.index[next_page] unless next_page.nil?
     end
 
     def to_s

@@ -2,7 +2,7 @@
 
 class Marsdawn::Site
   class Link
-    attr_reader :uri, :title, :site
+    attr_reader :uri, :title, :site, :full_path
 
     def initialize site, uri, title=nil
       @uri = uri

@@ -16,6 +16,13 @@ class Marsdawn::Site
       self
     end
 
+    def parent path
+      parent_path = "#{File.dirname(path)}/"
+      self.each_with_object(Marsdawn::Site::Indexer.new(@site).current_page(path)) do |(uri, link), ret|
+        ret[uri] = link if uri == parent_path
+      end
+    end
+
     def under path
       base = path + (path == '/' ? '' : '/')
       self.each_with_object(Marsdawn::Site::Indexer.new(@site).current_page(path)) do |(uri, link), ret|
@@ -26,7 +33,7 @@ class Marsdawn::Site
     def neighbor path
       level = path.count('/')
       base = File.dirname(path)
-      base = base + '/' if base != '/'
+      base = "#{base}/" if base != '/'
       self.each_with_object(Marsdawn::Site::Indexer.new(@site).current_page(path)) do |(uri, link), ret|
         ret[uri] = link if uri.start_with?(base) && uri.count('/') == level && uri != base
       end
@@ -36,16 +43,18 @@ class Marsdawn::Site
       to_html
     end
 
-    def to_html
+    def to_html options={}
       if self.size > 0
-        create_link_html File.dirname(self.keys.first)
+        opts = {
+        }.merge(options)
+        create_link_html File.dirname(self.keys.first), opts
       else
         ""
       end
     end
 
     private
-    def create_link_html path
+    def create_link_html path, opts={}
       base_level = path.count('/')
       words = []
       words << '<ul>'

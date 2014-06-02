@@ -10,13 +10,21 @@ class Marsdawn::Site
 
   def initialize opts, config=nil
     @key = opts[:key]
-    yield config if block_given?
-    config = Marsdawn::Config.new.to_hash(@key) if config.nil?
+    if block_given?
+      config = {}
+      yield config
+    elsif config.nil?
+      config = Marsdawn::Config.new.to_hash(@key)
+    end
     @config = config
     @storage = Marsdawn::Storage.get(@config[:storage], opts)
     @doc_info = @storage.get_document_info
     @opts = opts
     @base_path = (opts.key?(:base_path) ? opts[:base_path] : '')
+  end
+
+  def top
+    @top ||= page('/')
   end
 
   def page uri
