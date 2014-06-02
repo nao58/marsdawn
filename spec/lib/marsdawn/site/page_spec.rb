@@ -28,8 +28,12 @@ describe Marsdawn::Site::Page do
     before :all do
       @page = site.page('/')
     end
+    it 'should return the page title.' do
+      expect(page.title).to eq('Test Document 01')
+    end
     it 'should return the breadcrumb.' do
       expect(page.breadcrumb).to eq({})
+      expect(page.breadcrumb.to_s).to eq('')
     end
     it 'should return the neighbor pages.' do
       expect(page.neighbor.keys).to eq(%w(/about /tutorial /appendix))
@@ -46,9 +50,11 @@ describe Marsdawn::Site::Page do
     it 'should return the page navigation.' do
       expect(page.page_nav[:prev_page]).to be_nil
       expect(page.page_nav[:next_page].uri).to eq('/about')
+      expect(page.page_nav.to_s).to match(/^<ul>.*<\/ul>$/m)
     end
     it 'should return the link object to this page.' do
       expect(page.link.uri).to eq('/')
+      expect(page.link.to_s).to eq('<a href="/" title="Test Document 01">Test Document 01</a>')
     end
   end
 
@@ -77,6 +83,7 @@ describe Marsdawn::Site::Page do
     end
     it 'should return the link object to this page.' do
       expect(page.link.uri).to eq('/tutorial')
+      expect(page.link.to_s).to eq('<a href="/tutorial" title="Tutorial">Tutorial</a>')
     end
   end
 
@@ -108,6 +115,7 @@ describe Marsdawn::Site::Page do
     end
     it 'should return the link object to this page.' do
       expect(page.link.uri).to eq('/tutorial/install')
+      expect(page.link.to_s).to eq('<a href="/tutorial/install" title="Install">Install</a>')
     end
   end
 

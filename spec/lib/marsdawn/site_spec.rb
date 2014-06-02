@@ -32,6 +32,7 @@ describe Marsdawn::Site do
     end
     it 'should return the index.' do
       expect(site.index).to be_a_kind_of(Marsdawn::Site::Indexer)
+      expect(site.index.to_s).to match(/<ul>.*<\/ul>/)
     end
     it 'should return the page title.' do
       expect(site.page_title('/about')).to eq('About')

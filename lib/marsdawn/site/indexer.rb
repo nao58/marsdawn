@@ -16,12 +16,12 @@ class Marsdawn::Site
       self
     end
 
-    def parent path
-      parent_path = "#{File.dirname(path)}/"
-      self.each_with_object(Marsdawn::Site::Indexer.new(@site).current_page(path)) do |(uri, link), ret|
-        ret[uri] = link if uri == parent_path
-      end
-    end
+    #def parent path
+    #  parent_path = "#{File.dirname(path)}/"
+    #  self.each_with_object(Marsdawn::Site::Indexer.new(@site).current_page(path)) do |(uri, link), ret|
+    #    ret[uri] = link if uri == parent_path
+    #  end
+    #end
 
     def under path
       base = path + (path == '/' ? '' : '/')

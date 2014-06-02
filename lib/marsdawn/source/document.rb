@@ -9,10 +9,11 @@ class Marsdawn::Source
 
     attr_accessor :front_matter
 
-    def self.read path, options={}
+    def self.read path, title=nil, options={}
       text = open(path).read
       new(text, options).tap do |doc|
-        title = File.basename(path, '.*').gsub(/^\d+_/, '').gsub(/_|-/, ' ').capitalize
+        title = File.basename(path, '.*') if title.nil?
+        title = title.gsub(/^\d+_/, '').gsub(/_|-/, ' ').capitalize
         doc.front_matter[:title] ||= title
         doc.front_matter[:link_key] ||= title
       end

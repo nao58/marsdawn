@@ -83,7 +83,7 @@ class Marsdawn::Source
 
   def markdown file, uri, opts
     opts[:link_defs] = link_defs(uri)
-    Document.read(file, opts).to_html
+    Document.read(file, @front_matter[uri][:title], opts).to_html
   end
 
   def digg path, uri=''
@@ -122,7 +122,7 @@ class Marsdawn::Source
   end
 
   def read_front_matter file, name
-    doc = Document.read(file, @doc_info[:kramdown_options])
+    doc = Document.read(file, name, @doc_info[:kramdown_options])
     doc.front_matter
   end
 
