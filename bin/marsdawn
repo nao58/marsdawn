@@ -1,0 +1,6 @@
+# encoding: utf-8
+
+require 'marsdawn/command'
+
+command = Marsdawn::Command.exec(ARGV)
+exec command unless command.nil?

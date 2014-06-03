@@ -17,3 +17,4 @@ test/version_tmp
 tmp
 vendor
 spec/_compiled_doc/*/
+spec/_tmp/*/
