@@ -4,7 +4,7 @@ require 'yaml'
 
 module Marsdawn
   class Command
-    attr_accessor :editor
+    attr_accessor :editor, :auto_editor
 
     class ParamError < Exception; end
     class RuntimeError < Exception; end
@@ -21,11 +21,12 @@ module Marsdawn
 
     def initialize
       @editor = 'vim'
+      @auto_editor = true
       read_dot_marsdawn
     end
 
     def create title, opts={}
-      key = file_namize(title)
+      key = (opts.key?(:file) ? opts[:file] : file_namize(title))
       path = File.expand_path(key)
       raise "The directory '#{doc_name}' already exists." if File.exists?(path)
       Dir.mkdir path
@@ -34,23 +35,24 @@ module Marsdawn
       index_file = File.join(path, '.index.md')
       File.write dot_file, YAML.dump(data)
       create_page index_file, title, 'title' => title
-      edit_cmd dot_file, index_file if opts[:edit]
+      edit_cmd dot_file, index_file if @auto_editor || opts[:edit]
     end
 
     def dir title, opts={}
-      dir = file_namize(title)
+      dir = (opts.key?(:file) ? opts[:file] : file_namize(title))
       dir = add_num(dir, opts)
       path = File.expand_path(dir)
       Dir.mkdir path
       index_file = File.join(path, '.index.md')
       create_page index_file, title, 'title' => title
-      edit_cmd index_file if opts[:edit]
+      edit_cmd index_file if @auto_editor || opts[:edit]
     end
 
     def page title, opts={}
-      file = file_namize(title, '.md')
+      file = (opts.key?(:file) ? "#{opts[:file]}.md" : file_namize(title, '.md'))
       file = File.expand_path(add_num(file, opts))
       create_page file, title, 'title' => title
+      edit_cmd file if @auto_editor || opts[:edit]
     end
 
     def renum step, opts={}
@@ -63,6 +65,7 @@ module Marsdawn
       list.each do |src, dest|
         FileUtils.mv src, dest, :force => true unless src == dest
       end
+      'ls -1'
     end
 
     def debug type, opts={} 
@@ -87,6 +90,7 @@ module Marsdawn
     def self.opt_key switch
       opt_keys = {
         'e' => 'edit',
+        'f' => 'file',
         'n' => 'num',
         'o' => 'no-num',
         's' => 'step'
@@ -107,7 +111,7 @@ module Marsdawn
     end
 
     def file_namize title, ext=''
-      title.downcase.gsub(' ', '-') + ext
+      "#{title.downcase.gsub(' ', '-')}#{ext}"
     end
 
     def create_page path, title, front_matter={}

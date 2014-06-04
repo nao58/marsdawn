@@ -26,10 +26,15 @@ class Marsdawn::Storage::ActiveRecord < Marsdawn::Storage::Base
   def finalize
     MarsdawnDocs.transaction do
       MarsdawnDocs.where(selector).each do |page|
-        MarsdawnDocs.delete(selector(uri: page.uri)) unless @stack.key?(page.uri)
+        MarsdawnDocs.delete_all(selector(uri: page.uri)) unless @stack.key?(page.uri)
       end
       @stack.each do |uri, data|
-        MarsdawnDocs.create(selector(uri: uri, data: compress(data)))
+        rec = MarsdawnDocs.where(selector(uri: uri))
+        if rec.size > 0
+          rec.first.update_attributes! data: compress(data)
+        else
+          MarsdawnDocs.create selector(uri: uri, data: compress(data))
+        end
       end
     end
   rescue => e

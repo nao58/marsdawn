@@ -73,12 +73,12 @@ describe Marsdawn::Command do
     it 'should create new page.' do
       cmd.page 'About this test document', num: true
       cmd.page 'Getting Start', num: true
-      cmd.page 'Appendix 1', num: "100"
-      cmd.page 'Appendix 2', num: true
+      cmd.page 'Appendix 1', num: "100", file: 'omake'
+      cmd.page 'Appendix 2', num: true, file: 'furoku'
       expect(file_exists?('010_about-this-test-document.md')).to be_truthy
       expect(file_exists?('020_getting-start.md')).to be_truthy
-      expect(file_exists?('100_appendix-1.md')).to be_truthy
-      expect(file_exists?('110_appendix-2.md')).to be_truthy
+      expect(file_exists?('100_omake.md')).to be_truthy
+      expect(file_exists?('110_furoku.md')).to be_truthy
     end
   end
 
@@ -97,14 +97,14 @@ describe Marsdawn::Command do
     it 'should create new page.' do
       cmd.page 'About this test document', num: true
       cmd.dir  'Getting Start', num: true
-      cmd.dir  'Appendix 1', num: "100"
-      cmd.page 'Appendix 2', num: true, step: 5
+      cmd.dir  'Appendix 1', num: "100", file: 'omake'
+      cmd.page 'Appendix 2', num: true, step: 5, file: 'furoku'
       expect(file_exists?('010_about-this-test-document.md')).to be_truthy
       expect(file_exists?('020_getting-start')).to be_truthy
       expect(file_exists?('020_getting-start/.index.md')).to be_truthy
-      expect(file_exists?('100_appendix-1')).to be_truthy
-      expect(file_exists?('100_appendix-1/.index.md')).to be_truthy
-      expect(file_exists?('105_appendix-2.md')).to be_truthy
+      expect(file_exists?('100_omake')).to be_truthy
+      expect(file_exists?('100_omake/.index.md')).to be_truthy
+      expect(file_exists?('105_furoku.md')).to be_truthy
     end
   end
 

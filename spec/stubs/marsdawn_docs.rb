@@ -6,6 +6,7 @@ class MarsdawnDocs
   attr_accessor :key, :lang, :version, :uri, :data
 
   def self.transaction
+    @@data = {}
     @@trans_data = {}
     yield
     @@data = @@trans_data.dup
@@ -13,11 +14,11 @@ class MarsdawnDocs
 
   def self.where query
     [].tap do |ret|
-      ret << @@data[query[:uri]] if query.key?(:uri)
+      ret << @@data[query[:uri]] if query.key?(:uri) && @@data.key?(query[:uri])
     end
   end
 
-  def self.delete query
+  def self.delete_all query
     @@trans_data.delete(query[:uri])
   end
 
@@ -31,6 +32,9 @@ class MarsdawnDocs
     @version = rec[:version]
     @uri     = rec[:uri]
     @data    = rec[:data]
+  end
+
+  def update_attributes! attr
   end
 
 end

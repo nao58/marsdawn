@@ -8,8 +8,8 @@ Gem::Specification.new do |spec|
   spec.version       = Marsdawn::VERSION
   spec.authors       = ["Naohiko MORI"]
   spec.email         = ["naohiko.mori@gmail.com"]
-  spec.summary       = %q{Makes it easy to create documentation or references with MarkDown.}
-  spec.description   = %q{Makes it easy to create documentation or references with MarkDown.}
+  spec.summary       = %q{Easy static document builder & traverser.}
+  spec.description   = %q{Easy static document builder & traverser.}
   spec.homepage      = ""
   spec.license       = "MIT"
 
