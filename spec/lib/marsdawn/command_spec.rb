@@ -25,7 +25,7 @@ describe Marsdawn::Command do
     Dir.chdir($TMP_DIR)
     Dir.glob("*").each do |entry|
       path = File.expand_path(entry)
-      FileUtils.remove_entry(entry, true) if File.exists?(path)
+      FileUtils.remove_entry(path, true) if File.exists?(path)
     end
     @cmd = nil
   end
@@ -128,9 +128,13 @@ describe Marsdawn::Command do
     end
     it 'should do re-numbering with step.' do
       cmd.page 'About this test document', num: "15"
+      expect(file_exists?('015_about-this-test-document.md')).to be_truthy
       cmd.dir  'Getting Start', num: "20"
+      expect(file_exists?('020_getting-start')).to be_truthy
       cmd.dir  'Appendix 1', num: "100"
+      expect(file_exists?('100_appendix-1')).to be_truthy
       cmd.page 'Appendix 2', num: true, step: 5
+      expect(file_exists?('105_appendix-2.md')).to be_truthy
       cmd.renum "15"
       expect(file_exists?('015_about-this-test-document.md')).to be_truthy
       expect(file_exists?('030_getting-start')).to be_truthy
