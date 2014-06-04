@@ -62,11 +62,13 @@ module Marsdawn
         num += step
         ret[item] = add_num(item, num: num, step: step)
       end
+      p "#{list}"
       list.each do |src, dest|
         src = File.expand_path(src)
         dest = File.expand_path(dest)
         FileUtils.mv src, dest unless src == dest
       end
+      p "#{Dir.glob('*')}"
       'ls -1'
     end
 
