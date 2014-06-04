@@ -58,17 +58,13 @@ module Marsdawn
     def renum step, opts={}
       step = (step.nil? ? 10 : step.to_i)
       num = 0
-      list = Dir.glob('*').each_with_object({}) do |item, ret|
+      list = Dir.glob('*').sort.each_with_object({}) do |item, ret|
         num += step
         ret[item] = add_num(item, num: num, step: step)
       end
-      p "#{list}"
       list.each do |src, dest|
-        src = File.expand_path(src)
-        dest = File.expand_path(dest)
         FileUtils.mv src, dest unless src == dest
       end
-      p "#{Dir.glob('*')}"
       'ls -1'
     end
 
