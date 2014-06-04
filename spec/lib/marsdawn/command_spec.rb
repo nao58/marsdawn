@@ -108,7 +108,7 @@ describe Marsdawn::Command do
     end
   end
 
-  context 'with command .dir' do
+  context 'with command .renum' do
     before :each do
       cmd.create 'Test Document'
       chdir './test-document'

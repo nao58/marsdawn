@@ -31,6 +31,7 @@ module Marsdawn
     configs.each do |conf|
       Marsdawn::Builder.build conf
     end
+    puts "[MarsDawn] Build complete."
   rescue => e
     puts "[MarsDawn] ERROR: #{e.message}"
   end
