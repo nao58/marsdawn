@@ -1,5 +1,6 @@
 #!/usr/bin/ruby
 
+require 'marsdawn'
 require 'marsdawn/command'
 
 command = Marsdawn::Command.exec(ARGV)

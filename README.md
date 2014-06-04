@@ -1,3 +1,4 @@
+[![Gem Version](https://badge.fury.io/rb/marsdawn.svg)](http://badge.fury.io/rb/marsdawn)
 [![Build Status](https://travis-ci.org/nao58/marsdawn.svg?branch=master)](https://travis-ci.org/nao58/marsdawn)
 [![Coverage Status](https://coveralls.io/repos/nao58/marsdawn/badge.png?branch=master)](https://coveralls.io/r/nao58/marsdawn?branch=master)
 [![Code Climate](https://codeclimate.com/github/nao58/marsdawn.png)](https://codeclimate.com/github/nao58/marsdawn)
