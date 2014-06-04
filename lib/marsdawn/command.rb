@@ -63,7 +63,8 @@ module Marsdawn
         ret[item] = add_num(item, num: num, step: step)
       end
       list.each do |src, dest|
-        FileUtils.mv src, dest unless src == dest
+        #FileUtils.mv src, dest unless src == dest
+        File.rename src, dest unless src == dest
       end
       'ls -1'
     end
